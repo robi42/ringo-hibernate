@@ -211,6 +211,20 @@ function save(props, entity, entities) {
 /**
  * Impl. of corresponding store method.
  *
+ * @param key
+ */
+function remove(key) {
+    doInTxn(function (session) {
+        var obj = session.get(key[0], new java.lang.Long(getId(key)));
+        if (obj != null) {
+            session['delete'](obj);
+        }
+    });
+}
+
+/**
+ * Impl. of corresponding store method.
+ *
  * @param type
  * @param arg
  */
