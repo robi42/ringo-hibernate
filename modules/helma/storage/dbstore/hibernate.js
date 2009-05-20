@@ -139,12 +139,11 @@ function all(type) {
     return doInTxn(function (session) {
         var criteria = session.createCriteria(type);
         criteria.setCacheable(true);
-        var i, result = new ScriptableList(criteria.list());
-        for (i in result) {
-            // ScriptableList already wraps Maps into ScriptableMaps
-            result[i] = new Storable(result[i].$type$, result[i]);
+        var i, list = new ScriptableList(criteria.list());
+        for (i in list) {
+            list[i] = new Storable(list[i].$type$, list[i]);
         }
-        return result;
+        return list;
     });
 }
 
@@ -231,8 +230,8 @@ function getProps(type, arg) {
         arg.$type$ = type;
         return arg;
     } else if (isEntity(arg)) {
-        var props = {};
-        for (var i in arg) {
+        var id, props = {};
+        for (id in arg) {
             // don't copy type and id, not supposed to be editable props
             if (id != "$type" && id != "id") {
                 props[i] = arg[i];
@@ -257,7 +256,7 @@ function getEntity(type, arg) {
         var map = new java.util.HashMap();
         map.putAll(arg);
         var entity = new ScriptableMap(map);
-        entity['$type$'] = type;
+        entity.$type$ = type;
         return entity;
     }
     return null;
