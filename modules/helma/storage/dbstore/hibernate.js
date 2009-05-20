@@ -22,8 +22,7 @@ Storable.setStoreImplementation(this);
 var __shared__ = true;
 var log = require('helma/logging').getLogger(__name__);
 
-var configPropsFileRelativePath = 'config/hibernate.properties';
-var mappingsDirRelativePath = 'config';
+var configDirRelativePath = 'config';
 var config, isConfigured = false;
 var sessionFactory;
 
@@ -99,10 +98,9 @@ function getSession() {
  * Configures Hibernate.
  */
 function configure() {
-    var mappingsDirAbsolutePath = getResource(mappingsDirRelativePath).path;
-    var configPropsFileAbsolutePath =
-            getResource(configPropsFileRelativePath).path;
-    var configPropsFile = new java.io.File(configPropsFileAbsolutePath);
+    var configDirAbsolutePath = getResource(configDirRelativePath).path;
+    var configPropsFile = new java.io.File(configDirAbsolutePath
+            + java.io.File.separator + 'hibernate.properties');
     var fileInputStream = new java.io.FileInputStream(configPropsFile);
     var configProps = new java.util.Properties();
 
@@ -111,7 +109,7 @@ function configure() {
     fileInputStream.close();
 
     config = new Configuration();
-    config.addDirectory(new java.io.File(mappingsDirAbsolutePath));
+    config.addDirectory(new java.io.File(configDirAbsolutePath));
     config.setProperties(configProps);
     // use dynamic-map entity persistence mode
     config.setProperty('hibernate.default_entity_mode', 'dynamic-map');
