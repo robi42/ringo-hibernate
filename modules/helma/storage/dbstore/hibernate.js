@@ -233,8 +233,8 @@ function getProps(type, arg) {
         var id, props = {};
         for (id in arg) {
             // don't copy type and id, not supposed to be editable props
-            if (id != "$type" && id != "id") {
-                props[i] = arg[i];
+            if (id != '$type$' && id != 'id') {
+                props[id] = arg[id];
             }
         }
         return props;
