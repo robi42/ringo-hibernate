@@ -146,8 +146,8 @@ function all(type) {
         criteria.setCacheable(true);
         var i, result = new ScriptableList(criteria.list());
         for (i in result) {
-            result[i] = new Storable(result[i].$type$,
-                    new ScriptableMap(result[i]));
+            // ScriptableList already wraps Maps into ScriptableMaps
+            result[i] = new Storable(result[i].$type$, result[i]);
         }
         return result;
     });
@@ -161,10 +161,10 @@ function all(type) {
  */
 function get(type, id) {
     return doInTxn(function (session) {
-        var result = session.get(new java.lang.String(type),
-                new java.lang.Long(id));
+        var result = session.get(type, new java.lang.Long(id));
         if (result != null) {
-            result = new Storable(type, new ScriptableMap(result));
+            var entity = new ScriptableMap(result);
+            result = new Storable(entity.$type$, entity);
         }
         return result;
     });
@@ -194,7 +194,7 @@ function save(props, entity, entities) {
             value.save(entities);
             value = value._key;
         }
-        entity.put(id, value);
+        entity[id] = value;
     }
     if (isRoot) {
         var session = getSession();
@@ -223,9 +223,10 @@ function getProps(type, arg) {
         return arg;
     } else if (isEntity(arg)) {
         var props = {};
-        var i, map = new ScriptableMap(arg);
-        for (i in map) {
-            props[i] = map[i];
+        for (var i in arg) {
+            // don't copy type and id, not supposed to be editable props
+            if (id != "$type" && id != "id")
+                props[i] = arg[i];
         }
         return props;
     }
@@ -242,11 +243,40 @@ function getEntity(type, arg) {
     if (isEntity(arg)) {
         return arg;
     } else if (arg instanceof Object) {
-        var entity = new java.util.HashMap(arg);
-        entity.put('$type$', type);
+        // TODO: bacause of a Rhino bug we can't call new HashMap(arg);
+        var map = new java.util.HashMap();
+        map.putAll(arg);
+        var entity = new ScriptableMap(map);
+        entity['$type$'] = type;
         return entity;
     }
     return null;
+}
+
+function getKey(type, arg) {
+    if (isEntity(arg)) {
+        return [arg["$type$"], arg["id"]];
+    } else if (isKey(arg)) {
+        return arg;
+    }
+    return null;
+}
+
+function getId(key) {
+    return key[1];
+}
+
+function equalKeys(key1, key2) {
+    return key1 && key2
+            && key1[0] == key2[0]
+            && key1[1] == key2[1];
+}
+
+function isKey(value) {
+    return value instanceof Array
+            && value.length == 2
+            && typeof value[0] == 'string'
+            && typeof value[1] == 'string';
 }
 
 /**
@@ -255,7 +285,7 @@ function getEntity(type, arg) {
  * @param value
  */
 function isEntity(value) {
-    return value instanceof MapProxy;
+    return value instanceof ScriptableMap;
 }
 
 /**
