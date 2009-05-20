@@ -13,7 +13,6 @@ addToClasspath('./lib/javassist-3.4.GA.jar');
 addToClasspath('./lib/jta-1.1.jar');
 
 importClass(org.hibernate.cfg.Configuration);
-importClass(org.hibernate.proxy.map.MapProxy);
 
 export('Storable', 'getSession', 'doInTxn');
 
@@ -112,9 +111,7 @@ function configure() {
     fileInputStream.close();
 
     config = new Configuration();
-    // add mappings dir
     config.addDirectory(new java.io.File(mappingsDirAbsolutePath));
-    // set properties from hibernate.properties file
     config.setProperties(configProps);
     // use dynamic-map entity persistence mode
     config.setProperty('hibernate.default_entity_mode', 'dynamic-map');
@@ -123,7 +120,7 @@ function configure() {
             'org.hibernate.transaction.JDBCTransactionFactory');
     // enable session binding to managed context
     config.setProperty('hibernate.current_session_context_class', 'thread');
-    // enable the second level query cache
+    // enable query cache
     config.setProperty('hibernate.cache.use_query_cache', 'true');
     // use easy hibernate (eh) cache
     config.setProperty('hibernate.cache.provider_class',
@@ -225,8 +222,9 @@ function getProps(type, arg) {
         var props = {};
         for (var i in arg) {
             // don't copy type and id, not supposed to be editable props
-            if (id != "$type" && id != "id")
+            if (id != "$type" && id != "id") {
                 props[i] = arg[i];
+            }
         }
         return props;
     }
@@ -243,7 +241,7 @@ function getEntity(type, arg) {
     if (isEntity(arg)) {
         return arg;
     } else if (arg instanceof Object) {
-        // TODO: bacause of a Rhino bug we can't call new HashMap(arg);
+        // TODO: because of a Rhino bug we can't call new HashMap(arg);
         var map = new java.util.HashMap();
         map.putAll(arg);
         var entity = new ScriptableMap(map);
@@ -253,6 +251,12 @@ function getEntity(type, arg) {
     return null;
 }
 
+/**
+ * Impl. of corresponding store method.
+ *
+ * @param type
+ * @param arg
+ */
 function getKey(type, arg) {
     if (isEntity(arg)) {
         return [arg["$type$"], arg["id"]];
@@ -262,16 +266,32 @@ function getKey(type, arg) {
     return null;
 }
 
+/**
+ * Impl. of corresponding store method.
+ *
+ * @param key
+ */
 function getId(key) {
     return key[1];
 }
 
+/**
+ * Impl. of corresponding store method.
+ *
+ * @param key1
+ * @param key2
+ */
 function equalKeys(key1, key2) {
     return key1 && key2
             && key1[0] == key2[0]
             && key1[1] == key2[1];
 }
 
+/**
+ * Helper method for determining key.
+ *
+ * @param value
+ */
 function isKey(value) {
     return value instanceof Array
             && value.length == 2
@@ -280,7 +300,7 @@ function isKey(value) {
 }
 
 /**
- * Helper method for determining Entity.
+ * Helper method for determining entity.
  *
  * @param value
  */
