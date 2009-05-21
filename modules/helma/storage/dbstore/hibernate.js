@@ -187,14 +187,25 @@ function save(props, entity, entities) {
         if (isStorable(value)) {
             value.save(entities);
             value = value._key;
+        } else if (value instanceof Array) {
+            var set = new java.util.HashSet();
+            value.forEach(function (obj) {
+                if (obj instanceof Storable) {
+                    obj.save(entities);
+                    set.add(obj._key);
+                } else {
+                    set.add(obj);
+                }
+            });
+            value = set;
         }
         entity[id] = value;
     }
     if (isRoot) {
         var session = getSession();
-        var obj, i;
-        for (i = 0; i < entities.size(); i++) {
-            obj = entities.toArray()[i];
+        var obj, it;
+        for (it = entities.iterator(); it.hasNext(); ) {
+            obj = it.next();
             if (obj.get('id') != null) {
                 obj.put('id', new java.lang.Long(obj.get('id')));
             }
@@ -230,11 +241,20 @@ function getProps(type, arg) {
         arg.$type$ = type;
         return arg;
     } else if (isEntity(arg)) {
-        var id, props = {};
+        var id, value, props = {};
         for (id in arg) {
             // don't copy type and id, not supposed to be editable props
             if (id != '$type$' && id != 'id') {
-                props[id] = arg[id];
+                value = arg[id];
+                if (value instanceof java.util.Set) {
+                    var array = [];
+                    for (var it = value.iterator(); it.hasNext(); ) {
+                        var obj = it.next();
+                        array.push(new Storable(obj.$type$, obj));
+                    }
+                    value = array;
+                }
+                props[id] = value;
             }
         }
         return props;
@@ -270,7 +290,7 @@ function getEntity(type, arg) {
  */
 function getKey(type, arg) {
     if (isEntity(arg)) {
-        return [arg["$type$"], arg["id"]];
+        return [arg['$type$'], arg['id']];
     } else if (isKey(arg)) {
         return arg;
     }
