@@ -202,8 +202,7 @@ function save(props, entity, entities) {
         entity[id] = value;
     }
     if (isRoot) {
-        var session = getSession();
-        var obj, it;
+        var obj, it, session = getSession();
         for (it = entities.iterator(); it.hasNext(); ) {
             obj = it.next();
             if (obj.get('id') != null) {
@@ -253,6 +252,8 @@ function getProps(type, arg) {
                         array.push(new Storable(obj.$type$, obj));
                     }
                     value = array;
+                } else {
+                    value = Context.javaToJS(value, global);
                 }
                 props[id] = value;
             }
