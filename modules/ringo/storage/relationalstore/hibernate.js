@@ -92,7 +92,7 @@ function abortTransaction(transaction, error) {
         transaction.rollback(); // Rollback if something went wrong.
     }
     log.error('Problem occurred within Hibernate session transaction.');
-    throw e;
+    throw error;
 }
 
 /**
@@ -163,7 +163,8 @@ function all(type) {
         criteria.setCacheable(true);
         var i, list = new ScriptableList(criteria.list());
         for (i in list) {
-            list[i] = create(list[i].$type$, list[i].id, list[i]);
+            list[i] = create(type, list[i].id, list[i]);
+            list[i].$type$ = type;
         }
         return list;
     });
@@ -174,7 +175,7 @@ function get(type, id) {
         var result = session.get(type, new java.lang.Long(id));
         if (result != null) {
             var entity = new ScriptableMap(result);
-            result = create(entity.$type$, entity.id, entity);
+            result = create(type, entity.id, entity);
         }
         return result;
     });
@@ -214,7 +215,7 @@ function save(props, entity, entities) {
     if (isRoot) {
         for each (var obj in entities.toArray()) {
             if (!isStorable(obj)) {
-                obj = new ScriptableMap(obj)
+                obj = new ScriptableMap(obj);
             }
             if (obj.id != undefined) {
                 obj.id = new java.lang.Long(obj.id);
