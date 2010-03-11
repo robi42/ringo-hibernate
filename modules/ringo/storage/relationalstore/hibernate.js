@@ -227,7 +227,7 @@ function save(props, entity, entities) {
     commitTransaction(session);
 }
 
-function remove(key) {
+function remove(key) { // TODO: FIXME: doesn't work right ATM.
     withSession(function (session) {
         var obj = session.get(key[0], new java.lang.Long(getId(key)));
         if (obj != null) {
@@ -280,7 +280,7 @@ function getEntity(type, arg) {
 
 function getKey(type, arg) {
     if (isEntity(arg)) {
-        return [arg.$type$, arg.id];
+        return [type, arg.id];
     } else if (isKey(arg)) {
         return arg;
     }
