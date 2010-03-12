@@ -73,10 +73,13 @@ function beginTransaction(session) {
  * Commits a Hibernate session transaction.
  *
  * @param session the Hibernate session
+ * @returns transaction
  */
 function commitTransaction(session) {
     transactionTemplate(session, function () {
-        session.transaction.commit();
+        var transaction = session.transaction;
+        transaction.commit();
+        return transaction;
     });
 }
 
