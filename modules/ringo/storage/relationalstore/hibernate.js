@@ -64,9 +64,8 @@ function withSession(func) {
  * @returns transaction
  */
 function beginTransaction(session) {
-    transactionTemplate(session, function (transaction) {
-        transaction = session.beginTransaction();
-        return transaction;
+    transactionTemplate(session, function () {
+        return session.beginTransaction();
     });
 }
 
@@ -74,13 +73,10 @@ function beginTransaction(session) {
  * Commits a Hibernate session transaction.
  *
  * @param session the Hibernate session
- * @returns transaction
  */
 function commitTransaction(session) {
-    transactionTemplate(session, function (transaction) {
-        transaction = session.transaction;
-        transaction.commit();
-        return transaction;
+    transactionTemplate(session, function () {
+        session.transaction.commit();
     });
 }
 
@@ -107,7 +103,7 @@ function abortTransaction(transaction, error) {
 function transactionTemplate(session, func) {
     var transaction;
     try {
-        transaction = func(transaction);
+        transaction = func();
     } catch (error) {
         abortTransaction(transaction, error);
     }
