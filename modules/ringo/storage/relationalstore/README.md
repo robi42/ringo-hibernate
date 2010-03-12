@@ -1,4 +1,4 @@
-# ringo/relationalstore
+# ringo/storage/relationalstore
 
 ## Hibernate Module
 
