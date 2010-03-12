@@ -45,7 +45,8 @@ function defineClass(type) {
  * @returns result
  */
 function withSession(func) {
-    var transaction, session, result;
+    var transaction = null;
+    var session, result;
     try {
         session = getSession();
         transaction = beginTransaction(session);
@@ -104,7 +105,7 @@ function abortTransaction(transaction, error) {
  * @param {Function} func the stuff to do w/ transaction
  */
 function transactionTemplate(session, func) {
-    var transaction;
+    var transaction = null;
     try {
         transaction = func();
     } catch (error) {
@@ -128,32 +129,37 @@ function getSession() {
  * Configures Hibernate.
  */
 function configure() {
-    var configDirAbsolutePath = new File('config').getAbsolutePath();
-    var fileInputStream = new FileInputStream(new File(configDirAbsolutePath +
-            File.separator + 'hibernate.properties'));
-    var configProps = new java.util.Properties();
-    configProps.load(fileInputStream);
-    fileInputStream.close();
-    config = new Configuration();
-    config.addDirectory(new File(configDirAbsolutePath));
-    config.setProperties(configProps);
-    // Use dynamic-map entity persistence mode.
-    config.setProperty('hibernate.default_entity_mode', 'dynamic-map');
-    // Transactions are handled by JDBC, no JTA is used.
-    config.setProperty('hibernate.transaction.factory_class',
-            'org.hibernate.transaction.JDBCTransactionFactory');
-    // Enable session binding to managed context.
-    config.setProperty('hibernate.current_session_context_class', 'thread');
-    // Enable query cache.
-    config.setProperty('hibernate.cache.use_query_cache', 'true');
-    // Use easy hibernate (eh) cache.
-    config.setProperty('hibernate.cache.provider_class',
-            'org.hibernate.cache.EhCacheProvider');
-    // Use c3p0 connection pooling.
-    config.setProperty('hibernate.connection.provider_class',
-            'org.hibernate.connection.C3P0ConnectionProvider');
-    isConfigured = true;
-    sessionFactory = config.buildSessionFactory();
+    try {
+        var configDirPath = new File('config').getAbsolutePath();
+        var fileInputStream = new FileInputStream(new File(configDirPath +
+                File.separator + 'hibernate.properties'));
+        var configProps = new java.util.Properties();
+        configProps.load(fileInputStream);
+        fileInputStream.close();
+        config = new Configuration();
+        config.addDirectory(new File(configDirPath));
+        config.setProperties(configProps);
+        // Use dynamic-map entity persistence mode.
+        config.setProperty('hibernate.default_entity_mode', 'dynamic-map');
+        // Transactions are handled by JDBC, no JTA is used.
+        config.setProperty('hibernate.transaction.factory_class',
+                'org.hibernate.transaction.JDBCTransactionFactory');
+        // Enable session binding to managed context.
+        config.setProperty('hibernate.current_session_context_class', 'thread');
+        // Enable query cache.
+        config.setProperty('hibernate.cache.use_query_cache', 'true');
+        // Use easy hibernate (eh) cache.
+        config.setProperty('hibernate.cache.provider_class',
+                'org.hibernate.cache.EhCacheProvider');
+        // Use c3p0 connection pooling.
+        config.setProperty('hibernate.connection.provider_class',
+                'org.hibernate.connection.C3P0ConnectionProvider');
+        isConfigured = true;
+        sessionFactory = config.buildSessionFactory();
+    } catch (error) {
+        log.error('Something went wrong during Hibernate config.');
+        throw error;
+    }
 }
 
 function create(type, key, entity) {
