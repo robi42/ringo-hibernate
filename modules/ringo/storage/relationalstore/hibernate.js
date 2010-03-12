@@ -42,6 +42,7 @@ function defineClass(type) {
  * Do something within a Hibernate session transaction.
  *
  * @param {Function} func the stuff to do w/ session
+ * @returns result
  */
 function withSession(func) {
     var transaction;
@@ -60,6 +61,7 @@ function withSession(func) {
  * Begins a Hibernate session transaction.
  *
  * @param session the Hibernate session
+ * @returns transaction
  */
 function beginTransaction(session) {
     transactionTemplate(session, function (transaction) {
@@ -72,6 +74,7 @@ function beginTransaction(session) {
  * Commits a Hibernate session transaction.
  *
  * @param session the Hibernate session
+ * @returns transaction
  */
 function commitTransaction(session) {
     transactionTemplate(session, function (transaction) {
@@ -112,6 +115,8 @@ function transactionTemplate(session, func) {
 
 /**
  * Gets a Hibernate DB session.
+ *
+ * @returns session
  */
 function getSession() {
     if (!isConfigured) {
