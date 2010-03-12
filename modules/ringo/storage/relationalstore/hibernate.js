@@ -46,8 +46,8 @@ function defineClass(type) {
  */
 function withSession(func) {
     var transaction;
-    var session = getSession();
     try {
+        var session = getSession();
         transaction = beginTransaction(session);
         var result = func(session);
         commitTransaction(session);
