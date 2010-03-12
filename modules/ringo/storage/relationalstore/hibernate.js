@@ -45,11 +45,11 @@ function defineClass(type) {
  * @returns result
  */
 function withSession(func) {
-    var transaction;
+    var transaction, session, result;
     try {
-        var session = getSession();
+        session = getSession();
         transaction = beginTransaction(session);
-        var result = func(session);
+        result = func(session);
         commitTransaction(session);
         return result;
     } catch (error) {
