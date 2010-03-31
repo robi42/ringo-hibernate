@@ -10,13 +10,15 @@
     ],
     "jars": [
         "jars/antlr-2.7.6.jar",
+        "jars/backport-util-concurrent-3.0.jar",
         "jars/c3p0-0.9.1.jar",
         "jars/commons-collections-3.1.jar",
-        "jars/commons-logging-1.1.1.jar",
+        "jars/commons-logging-1.0.4.jar",
         "jars/dom4j-1.6.1.jar",
-        "jars/ehcache-1.2.3.jar",
+        "jars/ehcache-1.5.0.jar",
         "jars/hibernate3.jar",
-        "jars/javassist-3.4.GA.jar",
+        "jars/javassist-3.9.0.GA.jar",
+        "jars/jsr107cache-1.0.jar",
         "jars/jta-1.1.jar"
     ]
 }
