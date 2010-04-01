@@ -1,7 +1,7 @@
 // Run w/: $ ringo all
 
-include('io');
 include('ringo/unittest');
+var {TextStream, Stream} = require('io');
 var store = require('ringo/storage/hibernate');
 var person, Person = store.defineClass('Person');
 const FIRST_NAME_1 = 'Hans';
