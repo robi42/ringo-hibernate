@@ -52,6 +52,14 @@ exports.testBasicQuerying = function () {
     assertEqual(LAST_NAME, Person.all()[0].lastName);
 };
 
+// TODO: deletion functionality's currently slightly broken.
+/*exports.*/var testPersistDeletion = function () {
+    person.remove(); // FIXME.
+    person = Person.get(1);
+    assertNull(person);
+    assertEqual(0, Person.all().length);
+};
+
 if (require.main == module.id) {
     require('ringo/unittest').run(exports);
 }
