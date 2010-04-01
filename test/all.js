@@ -19,7 +19,7 @@ try {
 }
 
 exports.testSessionInit = function () {
-    assertNotNull(store.getSession());
+    assertTrue(store.getSession() instanceof org.hibernate.Session);
 };
 
 exports.testPersistCreation = function () {
