@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class entity-name="Person" table="persons">
+        <cache usage="read-write"/>
+
+        <id name="id"
+            column="id"
+            type="long">
+            <generator class="native"/>
+        </id>
+
+        <property name="firstName"
+                  column="first_name"
+                  type="string"
+                  not-null="true"/>
+
+        <property name="lastName"
+                  column="last_name"
+                  type="string"
+                  not-null="true"/>
+
+        <property name="birthDate"
+                  column="birth_date"
+                  type="date"
+                  not-null="true"/>
+    </class>
+
+</hibernate-mapping>
