@@ -19,6 +19,7 @@
         "jars/hibernate3.jar",
         "jars/javassist-3.9.0.GA.jar",
         "jars/jsr107cache-1.1.jar",
-        "jars/jta-1.1.jar"
+        "jars/jta-1.1.jar",
+        "jars/mysql-connector-java-5.1.12-bin.jar"
     ]
 }
