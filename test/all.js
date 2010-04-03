@@ -13,10 +13,7 @@ exports.testSessionInit = function () {
 };
 
 exports.testPersistCreation = function () {
-    person = new Person();
-    person.firstName = FIRST_NAME_1;
-    person.lastName = LAST_NAME;
-    person.birthDate = new Date(BIRTH_DATE_MILLIS);
+    person = createTestPerson();
     person.save();
     person = Person.get(1);
     assertNotNull(person);
@@ -52,6 +49,14 @@ exports.testBasicQuerying = function () {
     assertNull(person);
     assertEqual(0, Person.all().length);
 };
+
+function createTestPerson() {
+    var testPerson = new Person();
+    testPerson.firstName = FIRST_NAME_1;
+    testPerson.lastName = LAST_NAME;
+    testPerson.birthDate = new Date(BIRTH_DATE_MILLIS);
+    return testPerson;
+}
 
 if (require.main == module.id) {
     require('ringo/unittest').run(exports);
