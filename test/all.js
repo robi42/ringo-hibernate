@@ -8,16 +8,6 @@ const FIRST_NAME_1 = 'Hans';
 const FIRST_NAME_2 = 'Herbert';
 const LAST_NAME = 'Wurst';
 
-// Setup DB.
-var process = java.lang.Runtime.runtime.exec(['mysql', '-u', 'root', '-e',
-        'DROP DATABASE IF EXISTS ringotest; CREATE DATABASE ringotest;']);
-try {
-    process.waitFor();
-} finally {
-    new TextStream(new Stream(process.inputStream)).copy(system.stdout);
-    new TextStream(new Stream(process.errorStream)).copy(system.stderr);
-}
-
 exports.testSessionInit = function () {
     assertTrue(store.getSession() instanceof org.hibernate.Session);
 };
