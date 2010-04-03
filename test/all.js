@@ -7,6 +7,7 @@ var person, Person = store.defineClass('Person');
 const FIRST_NAME_1 = 'Hans';
 const FIRST_NAME_2 = 'Herbert';
 const LAST_NAME = 'Wurst';
+const BIRTH_DATE_MILLIS = 123456789000;
 
 exports.testSessionInit = function () {
     assertTrue(store.getSession() instanceof org.hibernate.Session);
@@ -16,11 +17,13 @@ exports.testPersistCreation = function () {
     person = new Person();
     person.firstName = FIRST_NAME_1;
     person.lastName = LAST_NAME;
+    person.birthDate = new Date(BIRTH_DATE_MILLIS);
     person.save();
     person = Person.get(1);
     assertNotNull(person);
     assertEqual(FIRST_NAME_1, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
+    assertEqual(BIRTH_DATE_MILLIS, person.birthDate.time);
 };
 
 exports.testPersistUpdating = function () {
@@ -32,6 +35,7 @@ exports.testPersistUpdating = function () {
     assertNotNull(person);
     assertEqual(FIRST_NAME_2, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
+    assertEqual(BIRTH_DATE_MILLIS, person.birthDate.time);
 };
 
 exports.testBasicQuerying = function () {

@@ -23,10 +23,10 @@
                   type="string"
                   not-null="true"/>
 
-        <!-- <property name="birthDate"
+        <property name="birthDate"
                   column="birth_date"
-                  type="date"
-                  not-null="true"/> -->
+                  type="timestamp"
+                  not-null="true"/>
     </class>
 
 </hibernate-mapping>
