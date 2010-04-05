@@ -61,6 +61,21 @@ exports.testBasicQuerying = function () {
     assertEqual(0, Person.all().length);
 };
 
+exports.testPersistInvalidPerson = function () {
+    person = createTestPerson();
+    person.firstName = 42; // `firstName` must be string.
+    assertThrows(function () person.save(), java.lang.ClassCastException);
+    person = createTestPerson();
+    person.lastName = new Date(); // `lastName` must be string.
+    assertThrows(function () person.save(), java.lang.ClassCastException);
+    person = createTestPerson();
+    person.birthDate = null; // `birthDate` mustn't be null.
+    assertThrows(function () person.save(), org.hibernate.
+            PropertyValueException);
+    assertThrows(function () (new Person).save(), org.hibernate.
+            PropertyValueException); // "Empty" person must fail.
+};
+
 function createTestPerson() {
     var testPerson = new Person();
     testPerson.firstName = FIRST_NAME_1;
