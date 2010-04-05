@@ -2,7 +2,11 @@
 
 include('ringo/unittest');
 var store = require('ringo/storage/hibernate');
-var person, Person = store.defineClass('Person');
+var person, Person = store.defineClass('Person',
+        {firstName: {type: 'string',    nullable: false},
+         lastName:  {type: 'string',    nullable: false},
+         birthDate: {type: 'timestamp', nullable: false},
+         vitae:     {column: 'resume',  type: 'text'}});
 const FIRST_NAME_1 = 'Hans';
 const FIRST_NAME_2 = 'Herbert';
 const LAST_NAME = 'Wurst';
