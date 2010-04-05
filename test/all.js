@@ -61,7 +61,7 @@ exports.testBasicQuerying = function () {
     assertEqual(0, Person.all().length);
 };
 
-exports.testPersistInvalidPerson = function () {
+exports.testPersistInvalidEntity = function () {
     person = createTestPerson();
     person.firstName = 42; // `firstName` must be string.
     assertThrows(function () person.save(), java.lang.ClassCastException);
