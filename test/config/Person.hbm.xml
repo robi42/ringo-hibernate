@@ -27,6 +27,10 @@
                   column="birth_date"
                   type="timestamp"
                   not-null="true"/>
+
+        <property name="vitae"
+                  column="vitae"
+                  type="text"/>
     </class>
 
 </hibernate-mapping>

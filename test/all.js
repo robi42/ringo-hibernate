@@ -7,6 +7,15 @@ const FIRST_NAME_1 = 'Hans';
 const FIRST_NAME_2 = 'Herbert';
 const LAST_NAME = 'Wurst';
 const BIRTH_DATE_MILLIS = 123456789000;
+const VITAE = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
+        'sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ' +
+        'aliquyam erat, sed diam voluptua. At vero eos et accusam et justo ' +
+        'duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata ' +
+        'sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, ' +
+        'consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ' +
+        'ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero ' +
+        'eos et accusam et justo duo dolores et ea rebum. Stet clita kasd ' +
+        'gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
 
 exports.testSessionInit = function () {
     assertTrue(store.getSession() instanceof org.hibernate.Session);
@@ -20,6 +29,7 @@ exports.testPersistCreation = function () {
     assertEqual(FIRST_NAME_1, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
     assertEqual(BIRTH_DATE_MILLIS, person.birthDate.time);
+    assertEqual(VITAE, person.vitae);
 };
 
 exports.testPersistUpdating = function () {
@@ -32,6 +42,7 @@ exports.testPersistUpdating = function () {
     assertEqual(FIRST_NAME_2, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
     assertEqual(BIRTH_DATE_MILLIS, person.birthDate.time);
+    assertEqual(VITAE, person.vitae);
 };
 
 exports.testBasicQuerying = function () {
@@ -55,6 +66,7 @@ function createTestPerson() {
     testPerson.firstName = FIRST_NAME_1;
     testPerson.lastName = LAST_NAME;
     testPerson.birthDate = new Date(BIRTH_DATE_MILLIS);
+    testPerson.vitae = VITAE;
     return testPerson;
 }
 
