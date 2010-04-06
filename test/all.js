@@ -6,7 +6,7 @@ var person, Person = store.defineClass('Person',
         {firstName: {type: 'string',    nullable: false},
          lastName:  {type: 'string',    nullable: false},
          birthDate: {type: 'timestamp', nullable: false},
-         vitae:     {column: 'resume',  type: 'text'}});
+         vitae:     {column: 'resume',  type: 'text', unique: true}});
 const FIRST_NAME_1 = 'Hans';
 const FIRST_NAME_2 = 'Herbert';
 const LAST_NAME = 'Wurst';
@@ -76,6 +76,9 @@ exports.testPersistInvalidEntity = function () {
     person.birthDate = null; // `birthDate` mustn't be null.
     assertThrows(function () person.save(), org.hibernate.
             PropertyValueException);
+    person = createTestPerson(); // `vitae/resume` must be unique.
+    assertThrows(function () person.save(), org.hibernate.exception.
+            ConstraintViolationException);
     assertThrows(function () (new Person).save(), org.hibernate.
             PropertyValueException); // "Empty" person must fail.
 };
