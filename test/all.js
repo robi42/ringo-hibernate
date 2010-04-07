@@ -85,12 +85,8 @@ exports.testPersistInvalidEntity = function () {
 };
 
 function createTestPerson() {
-    var testPerson = new Person();
-    testPerson.firstName = FIRST_NAME_1;
-    testPerson.lastName = LAST_NAME;
-    testPerson.birthDate = new Date(BIRTH_DATE_MILLIS);
-    testPerson.vitae = VITAE;
-    return testPerson;
+    return new Person({firstName: FIRST_NAME_1, lastName: LAST_NAME,
+            birthDate: new Date(BIRTH_DATE_MILLIS), vitae: VITAE});
 }
 
 if (require.main == module.id) {
