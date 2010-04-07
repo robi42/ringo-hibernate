@@ -55,6 +55,10 @@ exports.testBasicQuerying = function () {
     });
     assertEqual(1, Person.all().length);
     assertEqual(LAST_NAME, Person.all()[0].lastName);
+    assertEqual(LAST_NAME, Person.query().equals('lastName', LAST_NAME).
+            select('lastName')[0]);
+    assertEqual(1, Person.query().equals('lastName', LAST_NAME).select().
+            length);
 };
 
 exports.testPersistDeletion = function () {
