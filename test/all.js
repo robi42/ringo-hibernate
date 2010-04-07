@@ -68,8 +68,8 @@ exports.testPersistInvalidEntity = function () {
     person = createTestPerson();
     person.save();
     person = createTestPerson(); // `vitae/resume` must be unique.
-        assertThrows(function () person.save(), org.hibernate.exception.
-                ConstraintViolationException);
+    assertThrows(function () person.save(), org.hibernate.exception.
+            ConstraintViolationException);
     person = createTestPerson();
     person.firstName = 42; // `firstName` must be string.
     assertThrows(function () person.save(), java.lang.ClassCastException);
