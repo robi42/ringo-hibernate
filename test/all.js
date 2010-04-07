@@ -57,15 +57,19 @@ exports.testBasicQuerying = function () {
     assertEqual(LAST_NAME, Person.all()[0].lastName);
 };
 
-// TODO: deletion functionality's currently slightly broken.
-/*exports.*/var testPersistDeletion = function () {
-    person.remove(); // FIXME.
+exports.testPersistDeletion = function () {
+    person.remove();
     person = Person.get(1);
     assertNull(person);
     assertEqual(0, Person.all().length);
 };
 
 exports.testPersistInvalidEntity = function () {
+    person = createTestPerson();
+    person.save();
+    person = createTestPerson(); // `vitae/resume` must be unique.
+        assertThrows(function () person.save(), org.hibernate.exception.
+                ConstraintViolationException);
     person = createTestPerson();
     person.firstName = 42; // `firstName` must be string.
     assertThrows(function () person.save(), java.lang.ClassCastException);
@@ -76,9 +80,6 @@ exports.testPersistInvalidEntity = function () {
     person.birthDate = null; // `birthDate` mustn't be null.
     assertThrows(function () person.save(), org.hibernate.
             PropertyValueException);
-    person = createTestPerson(); // `vitae/resume` must be unique.
-    assertThrows(function () person.save(), org.hibernate.exception.
-            ConstraintViolationException);
     assertThrows(function () (new Person).save(), org.hibernate.
             PropertyValueException); // "Empty" person must fail.
 };
