@@ -4,7 +4,7 @@
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 <!-- Use programmatic mapping via `defineClass` & co.
-    <class entity-name="Person" table="persons">
+    <class entity-name="Person" table="Person">
         <cache usage="read-write"/>
 
         <id name="id"
@@ -14,23 +14,24 @@
         </id>
 
         <property name="firstName"
-                  column="first_name"
+                  column="firstName"
                   type="string"
                   not-null="true"/>
 
         <property name="lastName"
-                  column="last_name"
+                  column="lastName"
                   type="string"
                   not-null="true"/>
 
         <property name="birthDate"
-                  column="birth_date"
+                  column="birthDate"
                   type="timestamp"
                   not-null="true"/>
 
         <property name="vitae"
-                  column="vitae"
-                  type="text"/>
+                  column="resume"
+                  type="text"
+                  unique="true"/>
     </class>
 -->
 </hibernate-mapping>
