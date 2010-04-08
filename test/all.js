@@ -11,7 +11,7 @@ const FIRST_NAME_1 = 'Hans';
 const FIRST_NAME_2 = 'Herbert';
 const LAST_NAME = 'Wurst';
 const BIRTH_DATE_MILLIS = 123456789000;
-const VITAE = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
+const VITAE_1 = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
         'sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ' +
         'aliquyam erat, sed diam voluptua. At vero eos et accusam et justo ' +
         'duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata ' +
@@ -19,7 +19,15 @@ const VITAE = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
         'consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ' +
         'ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero ' +
         'eos et accusam et justo duo dolores et ea rebum. Stet clita kasd ' +
-        'gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
+        'gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
+const VITAE_2 = VITAE_1 + ' Foo.';
+
+exports.setUp = function () {
+    store.withSession(function (session) { // Clean table.
+        session.createQuery('delete from Person').executeUpdate();
+    });
+    assertNull(Person.get(1));
+};
 
 exports.testSessionInit = function () {
     assertTrue(store.getSession() instanceof org.hibernate.Session);
@@ -33,38 +41,49 @@ exports.testPersistCreation = function () {
     assertEqual(FIRST_NAME_1, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
     assertEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
-    assertEqual(VITAE, person.vitae);
+    assertEqual(VITAE_1, person.vitae);
 };
 
 exports.testPersistUpdating = function () {
+    person = createTestPerson();
+    person.save();
     person = Person.all()[0];
     assertNotNull(person);
     person.firstName = FIRST_NAME_2;
     person.save();
-    person = Person.get(1);
+    person = Person.all()[0];
     assertNotNull(person);
     assertEqual(FIRST_NAME_2, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
     assertEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
-    assertEqual(VITAE, person.vitae);
+    assertEqual(VITAE_1, person.vitae);
 };
 
 exports.testBasicQuerying = function () {
+    person = createTestPerson();
+    person.save();
+    person = createTestPerson();
+    person.firstName = FIRST_NAME_2;
+    person.vitae = VITAE_2;
+    person.save();
     store.withSession(function (session) {
-        assertEqual(1, session.createCriteria('Person').list().size());
+        assertEqual(2, session.createCriteria('Person').list().size());
     });
-    assertEqual(1, Person.all().length);
+    assertEqual(2, Person.all().length);
     assertEqual(LAST_NAME, Person.all()[0].lastName);
-    assertEqual(LAST_NAME, Person.query().equals('lastName', LAST_NAME).
-            select('lastName')[0]);
-    assertEqual(1, Person.query().equals('lastName', LAST_NAME).select().
+    assertEqual(VITAE_2, Person.query().equals('lastName', LAST_NAME).
+            equals('firstName', FIRST_NAME_2).select('vitae')[0]);
+    assertEqual(2, Person.query().equals('lastName', LAST_NAME).select().
             length);
 };
 
 exports.testPersistDeletion = function () {
+    person = createTestPerson();
+    person.save();
+    person = Person.all()[0];
     person.remove();
-    person = Person.get(1);
-    assertNull(person);
+    person = Person.all()[0];
+    assertUndefined(person);
     assertEqual(0, Person.all().length);
 };
 
@@ -90,7 +109,7 @@ exports.testPersistInvalidEntity = function () {
 
 function createTestPerson() {
     return new Person({firstName: FIRST_NAME_1, lastName: LAST_NAME,
-            birthDate: new Date(BIRTH_DATE_MILLIS), vitae: VITAE});
+            birthDate: new Date(BIRTH_DATE_MILLIS), vitae: VITAE_1});
 }
 
 if (require.main == module.id) {
