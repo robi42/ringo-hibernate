@@ -80,16 +80,30 @@ exports.testBasicQuerying = function () {
             length);
     assertEqual(FIRST_NAME_1, Person.query().equals('firstName', FIRST_NAME_1).
             select('firstName')[0]);
+    testGreaterLessQuerying();
+    assertEqual(2, Person.query().equals('lastName', LAST_NAME).select().
+            length);
+};
+
+function testGreaterLessQuerying() {
     assertEqual(2, Person.query().greater('birthYear', BIRTH_YEAR - 1).select().
+            length);
+    assertEqual(0, Person.query().greater('birthYear', BIRTH_YEAR + 1).select().
             length);
     assertEqual(2, Person.query().less('birthYear', BIRTH_YEAR + 1).select().
             length);
+    assertEqual(0, Person.query().less('birthYear', BIRTH_YEAR - 1).select().
+            length);
     assertEqual(2, Person.query().greaterEquals('birthYear', BIRTH_YEAR).
+            select().length);
+    assertEqual(2, Person.query().greaterEquals('birthYear', BIRTH_YEAR - 1).
             select().length);
     assertEqual(0, Person.query().greaterEquals('birthYear', BIRTH_YEAR + 1).
             select().length);
     assertEqual(2, Person.query().lessEquals('birthYear', BIRTH_YEAR).select().
             length);
+    assertEqual(2, Person.query().lessEquals('birthYear', BIRTH_YEAR + 1).
+            select().length);
     assertEqual(0, Person.query().lessEquals('birthYear', BIRTH_YEAR - 1).
             select().length);
     assertEqual(2, Person.query().greater('birthDate', new Date(
@@ -112,9 +126,7 @@ exports.testBasicQuerying = function () {
             BIRTH_DATE_MILLIS + 1)).select().length);
     assertEqual(0, Person.query().lessEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS - 1)).select().length);
-    assertEqual(2, Person.query().equals('lastName', LAST_NAME).select().
-            length);
-};
+}
 
 exports.testPersistDeletion = function () {
     person = createTestPerson();
