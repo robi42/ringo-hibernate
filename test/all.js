@@ -88,6 +88,9 @@ exports.testBasicQuerying = function () {
 };
 
 function testGreaterLessQuerying() {
+    assertEqual(LAST_NAME, Person.query().equals('lastName', LAST_NAME).
+            greater('birthDate', new Date(BIRTH_DATE_MILLIS - 1)).
+            less('birthYear', BIRTH_YEAR + 1).select('lastName')[0]);
     assertEqual(2, Person.query().greater('birthYear', BIRTH_YEAR - 1).select().
             length);
     assertEqual(0, Person.query().greater('birthYear', BIRTH_YEAR + 1).select().
