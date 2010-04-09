@@ -43,6 +43,7 @@ exports.testPersistCreation = function () {
     assertEqual(FIRST_NAME_1, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
     assertEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
+    assertEqual(BIRTH_YEAR, person.birthYear);
     assertEqual(VITAE_1, person.vitae);
 };
 
@@ -59,6 +60,7 @@ exports.testPersistUpdating = function () {
     assertEqual(FIRST_NAME_2, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
     assertEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
+    assertEqual(BIRTH_YEAR, person.birthYear);
     assertEqual(VITAE_1, person.vitae);
 };
 
