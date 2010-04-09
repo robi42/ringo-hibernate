@@ -1,8 +1,10 @@
 # Ringo-Hibernate
 
-* This package enables [RingoJS][ringo-home] to use [Hibernate][hibernate-home] as ORM/persistence layer.
-* For a reference implementation have a look at [ringowiki/hibernate][ref-impl].
+* This package enables [RingoJS] to use [Hibernate] as ORM/persistence layer.
+* Its xUnit [tests] cover/show API usage (based on RingoJS' Storable).
+* For a reference app impl. have a look at [ringowiki/hibernate].
 
-  [ringo-home]: http://ringojs.org/
-  [hibernate-home]: http://hibernate.org/
-  [ref-impl]: http://github.com/ringo/ringowiki/tree/hibernate
+  [RingoJS]: http://ringojs.org/
+  [Hibernate]: http://hibernate.org/
+  [tests]: http://github.com/robi42/ringo-hibernate/tree/master/test/
+  [ringowiki/hibernate]: http://github.com/ringo/ringowiki/tree/hibernate
