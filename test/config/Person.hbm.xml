@@ -28,6 +28,10 @@
                   type="timestamp"
                   not-null="true"/>
 
+        <property name="birthYear"
+                  column="birthYear"
+                  type="integer"/>
+
         <property name="vitae"
                   column="resume"
                   type="text"
