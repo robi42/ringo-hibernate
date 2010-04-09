@@ -24,12 +24,6 @@ const VITAE_1 = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
         'gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
 const VITAE_2 = VITAE_1 + ' Foo.';
 
-function assertPerson() {
-    assertNotNull(person);
-    assertTrue(person instanceof Storable &&
-            person instanceof Person);
-}
-
 exports.setUp = function () {
     store.withSession(function (session) { // Clean table.
         session.createQuery('delete from Person').executeUpdate();
@@ -176,6 +170,12 @@ exports.testPersistInvalidEntity = function () {
     assertThrows(function () (new Person).save(), org.hibernate.
             PropertyValueException); // "Empty" person must fail.
 };
+
+function assertPerson() {
+    assertNotNull(person);
+    assertTrue(person instanceof Storable &&
+            person instanceof Person);
+}
 
 function createTestPerson() {
     return new Person({firstName: FIRST_NAME_1, lastName: LAST_NAME,
