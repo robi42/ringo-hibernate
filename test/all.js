@@ -74,6 +74,26 @@ exports.testBasicQuerying = function () {
     assertEqual(LAST_NAME, Person.all()[0].lastName);
     assertEqual(VITAE_2, Person.query().equals('lastName', LAST_NAME).
             equals('firstName', FIRST_NAME_2).select('vitae')[0]);
+    assertEqual(2, Person.query().greater('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS - 1)).select().length);
+    assertEqual(0, Person.query().greater('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS)).select().length);
+    assertEqual(2, Person.query().greaterEquals('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS)).select().length);
+    assertEqual(2, Person.query().greaterEquals('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS - 1)).select().length);
+    assertEqual(0, Person.query().greaterEquals('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS + 1)).select().length);
+    assertEqual(2, Person.query().less('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS + 1)).select().length);
+    assertEqual(0, Person.query().less('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS)).select().length);
+    assertEqual(2, Person.query().lessEquals('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS)).select().length);
+    assertEqual(2, Person.query().lessEquals('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS + 1)).select().length);
+    assertEqual(0, Person.query().lessEquals('birthDate', new java.util.Date(
+            BIRTH_DATE_MILLIS - 1)).select().length);
     assertEqual(2, Person.query().equals('lastName', LAST_NAME).select().
             length);
 };
