@@ -64,6 +64,18 @@ exports.testPersistUpdating = function () {
     assertEqual(VITAE_1, person.vitae);
 };
 
+exports.testPersistDeletion = function () {
+    person = createTestPerson();
+    person.save();
+    person = Person.all()[0];
+    assertPerson();
+    personId = person._id;
+    person.remove();
+    person = Person.get(personId);
+    assertNull(person);
+    assertEqual(0, Person.all().length);
+};
+
 exports.testBasicQuerying = function () {
     person = createTestPerson();
     person.save();
@@ -139,18 +151,6 @@ function testGreaterLessQuerying() {
             less('birthYear', BIRTH_YEAR + 1).select('lastName')[0]);
 }
 
-exports.testPersistDeletion = function () {
-    person = createTestPerson();
-    person.save();
-    person = Person.all()[0];
-    assertPerson();
-    personId = person._id;
-    person.remove();
-    person = Person.get(personId);
-    assertNull(person);
-    assertEqual(0, Person.all().length);
-};
-
 exports.testPersistInvalidEntity = function () {
     person = createTestPerson();
     person.save();
@@ -171,16 +171,16 @@ exports.testPersistInvalidEntity = function () {
             PropertyValueException); // "Empty" person must fail.
 };
 
-function assertPerson() {
-    assertNotNull(person);
-    assertTrue(person instanceof Storable &&
-            person instanceof Person);
-}
-
 function createTestPerson() {
     return new Person({firstName: FIRST_NAME_1, lastName: LAST_NAME,
             birthDate: new Date(BIRTH_DATE_MILLIS), birthYear: BIRTH_YEAR,
             vitae: VITAE_1});
+}
+
+function assertPerson() {
+    assertNotNull(person);
+    assertTrue(person instanceof Storable &&
+            person instanceof Person);
 }
 
 if (require.main == module.id) {
