@@ -2,7 +2,7 @@
 
 include('ringo/unittest');
 var store = require('ringo/storage/hibernate');
-var person, Person = store.defineClass('Person',
+var personId, person, Person = store.defineClass('Person',
         {firstName: {type: 'string',    nullable: false},
          lastName:  {type: 'string',    nullable: false},
          birthDate: {type: 'timestamp', nullable: false},
@@ -49,9 +49,10 @@ exports.testPersistUpdating = function () {
     person.save();
     person = Person.all()[0];
     assertNotNull(person);
+    personId = person._id;
     person.firstName = FIRST_NAME_2;
     person.save();
-    person = Person.all()[0];
+    person = Person.get(personId);
     assertNotNull(person);
     assertEqual(FIRST_NAME_2, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
@@ -81,9 +82,10 @@ exports.testPersistDeletion = function () {
     person = createTestPerson();
     person.save();
     person = Person.all()[0];
+    personId = person._id;
     person.remove();
-    person = Person.all()[0];
-    assertUndefined(person);
+    person = Person.get(personId);
+    assertNull(person);
     assertEqual(0, Person.all().length);
 };
 
