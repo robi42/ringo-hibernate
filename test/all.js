@@ -6,11 +6,13 @@ var personId, person, Person = store.defineClass('Person',
         {firstName: {type: 'string',    nullable: false},
          lastName:  {type: 'string',    nullable: false},
          birthDate: {type: 'timestamp', nullable: false},
-         vitae:     {column: 'resume',  type: 'text', unique: true}});
+         birthYear: {type: 'integer'},
+         vitae:     {column: 'resume', type: 'text', unique: true}});
 const FIRST_NAME_1 = 'Hans';
 const FIRST_NAME_2 = 'Herbert';
 const LAST_NAME = 'Wurst';
 const BIRTH_DATE_MILLIS = 123456789000;
+const BIRTH_YEAR = new Date(BIRTH_DATE_MILLIS).getFullYear();
 const VITAE_1 = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
         'sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ' +
         'aliquyam erat, sed diam voluptua. At vero eos et accusam et justo ' +
@@ -78,25 +80,37 @@ exports.testBasicQuerying = function () {
             length);
     assertEqual(FIRST_NAME_1, Person.query().equals('firstName', FIRST_NAME_1).
             select('firstName')[0]);
-    assertEqual(2, Person.query().greater('birthDate', new java.util.Date(
+    assertEqual(2, Person.query().greater('birthYear', BIRTH_YEAR - 1).select().
+            length);
+    assertEqual(2, Person.query().less('birthYear', BIRTH_YEAR + 1).select().
+            length);
+    assertEqual(2, Person.query().greaterEquals('birthYear', BIRTH_YEAR).
+            select().length);
+    assertEqual(0, Person.query().greaterEquals('birthYear', BIRTH_YEAR + 1).
+            select().length);
+    assertEqual(2, Person.query().lessEquals('birthYear', BIRTH_YEAR).select().
+            length);
+    assertEqual(0, Person.query().lessEquals('birthYear', BIRTH_YEAR - 1).
+            select().length);
+    assertEqual(2, Person.query().greater('birthDate', new Date(
             BIRTH_DATE_MILLIS - 1)).select().length);
-    assertEqual(0, Person.query().greater('birthDate', new java.util.Date(
+    assertEqual(0, Person.query().greater('birthDate', new Date(
             BIRTH_DATE_MILLIS)).select().length);
-    assertEqual(2, Person.query().greaterEquals('birthDate', new java.util.Date(
+    assertEqual(2, Person.query().greaterEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS)).select().length);
-    assertEqual(2, Person.query().greaterEquals('birthDate', new java.util.Date(
+    assertEqual(2, Person.query().greaterEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS - 1)).select().length);
-    assertEqual(0, Person.query().greaterEquals('birthDate', new java.util.Date(
+    assertEqual(0, Person.query().greaterEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS + 1)).select().length);
-    assertEqual(2, Person.query().less('birthDate', new java.util.Date(
-            BIRTH_DATE_MILLIS + 1)).select().length);
-    assertEqual(0, Person.query().less('birthDate', new java.util.Date(
+    assertEqual(2, Person.query().less('birthDate', new Date(BIRTH_DATE_MILLIS +
+            1)).select().length);
+    assertEqual(0, Person.query().less('birthDate', new Date(BIRTH_DATE_MILLIS)
+            ).select().length);
+    assertEqual(2, Person.query().lessEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS)).select().length);
-    assertEqual(2, Person.query().lessEquals('birthDate', new java.util.Date(
-            BIRTH_DATE_MILLIS)).select().length);
-    assertEqual(2, Person.query().lessEquals('birthDate', new java.util.Date(
+    assertEqual(2, Person.query().lessEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS + 1)).select().length);
-    assertEqual(0, Person.query().lessEquals('birthDate', new java.util.Date(
+    assertEqual(0, Person.query().lessEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS - 1)).select().length);
     assertEqual(2, Person.query().equals('lastName', LAST_NAME).select().
             length);
@@ -135,7 +149,8 @@ exports.testPersistInvalidEntity = function () {
 
 function createTestPerson() {
     return new Person({firstName: FIRST_NAME_1, lastName: LAST_NAME,
-            birthDate: new Date(BIRTH_DATE_MILLIS), vitae: VITAE_1});
+            birthDate: new Date(BIRTH_DATE_MILLIS), birthYear: BIRTH_YEAR,
+            vitae: VITAE_1});
 }
 
 if (require.main == module.id) {
