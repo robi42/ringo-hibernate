@@ -40,6 +40,8 @@ exports.testPersistCreation = function () {
     person.save();
     person = Person.get(1);
     assertNotNull(person);
+    assertTrue(person instanceof Storable &&
+            person instanceof Person);
     assertEqual(FIRST_NAME_1, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
     assertEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
@@ -52,10 +54,14 @@ exports.testPersistUpdating = function () {
     person.save();
     person = Person.all()[0];
     assertNotNull(person);
+    assertTrue(person instanceof Storable &&
+            person instanceof Person);
     personId = person._id;
     person.firstName = FIRST_NAME_2;
     person.save();
     person = Person.get(personId);
+    assertTrue(person instanceof Storable &&
+            person instanceof Person);
     assertNotNull(person);
     assertEqual(FIRST_NAME_2, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
@@ -143,6 +149,8 @@ exports.testPersistDeletion = function () {
     person = createTestPerson();
     person.save();
     person = Person.all()[0];
+    assertTrue(person instanceof Storable &&
+            person instanceof Person);
     personId = person._id;
     person.remove();
     person = Person.get(personId);
