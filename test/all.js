@@ -24,6 +24,12 @@ const VITAE_1 = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
         'gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
 const VITAE_2 = VITAE_1 + ' Foo.';
 
+function assertPerson() {
+    assertNotNull(person);
+    assertTrue(person instanceof Storable &&
+            person instanceof Person);
+}
+
 exports.setUp = function () {
     store.withSession(function (session) { // Clean table.
         session.createQuery('delete from Person').executeUpdate();
@@ -39,9 +45,7 @@ exports.testPersistCreation = function () {
     person = createTestPerson();
     person.save();
     person = Person.get(1);
-    assertNotNull(person);
-    assertTrue(person instanceof Storable &&
-            person instanceof Person);
+    assertPerson();
     assertEqual(FIRST_NAME_1, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
     assertEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
@@ -53,16 +57,12 @@ exports.testPersistUpdating = function () {
     person = createTestPerson();
     person.save();
     person = Person.all()[0];
-    assertNotNull(person);
-    assertTrue(person instanceof Storable &&
-            person instanceof Person);
+    assertPerson();
     personId = person._id;
     person.firstName = FIRST_NAME_2;
     person.save();
     person = Person.get(personId);
-    assertTrue(person instanceof Storable &&
-            person instanceof Person);
-    assertNotNull(person);
+    assertPerson();
     assertEqual(FIRST_NAME_2, person.firstName);
     assertEqual(LAST_NAME, person.lastName);
     assertEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
@@ -149,8 +149,7 @@ exports.testPersistDeletion = function () {
     person = createTestPerson();
     person.save();
     person = Person.all()[0];
-    assertTrue(person instanceof Storable &&
-            person instanceof Person);
+    assertPerson();
     personId = person._id;
     person.remove();
     person = Person.get(personId);
