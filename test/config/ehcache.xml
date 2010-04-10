@@ -1,6 +1,6 @@
 <!-- Standard ehcache config (incl. for `Person` domain objects) -->
 <ehcache>
-    <diskStore path="ehcache"/>
+    <diskStore path="test-ehcache"/>
     <defaultCache
         maxElementsInMemory="10"
         eternal="false"
