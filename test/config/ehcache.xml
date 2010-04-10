@@ -1,3 +1,4 @@
+<!-- Standard ehcache config (incl. for `Person` domain objects) -->
 <ehcache>
     <diskStore path="ehcache"/>
     <defaultCache
