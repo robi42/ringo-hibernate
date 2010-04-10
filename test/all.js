@@ -1,7 +1,7 @@
 // Run w/, e.g.: $ ringo test/all
 
 include('ringo/unittest');
-addToClasspath('./config'); // To retrieve and load hibernate.properties.
+addToClasspath('./config'); // To retrieve and load Hibernate config resources.
 var store = require('ringo/storage/hibernate');
 // Uncomment following line to test loading mappings from *.hbm.xml instead.
 //store.setHbmXmlDir(require('fs').join(module.directory, 'config'));
