@@ -5,13 +5,14 @@ addToClasspath('./config'); // To retrieve and load Hibernate config resources.
 var store = require('ringo/storage/hibernate');
 // Uncomment following line to test loading mappings from *.hbm.xml instead.
 //store.setHbmXmlDir(require('fs').join(module.directory, 'config'));
-var personId, person, Person = store.defineClass('Person', {
+var personId, person, // Define `Person` model w/ its O/R mapping.
+    Person = store.defineClass('Person', {table: 'persons', props: {
         firstName: {type: 'string', nullable: false},
-        lastName:  {type: 'string', nullable: false},
+        lastName: {type: 'string', nullable: false},
         birthDate: {type: 'timestamp', nullable: false},
         birthYear: {type: 'integer'},
-        vitae:     {column: 'resume', type: 'text', unique: true}
-});
+        vitae: {column: 'resume', type: 'text', unique: true}
+}});
 const FIRST_NAME_1 = 'Hans';
 const FIRST_NAME_2 = 'Herbert';
 const LAST_NAME = 'Wurst';
