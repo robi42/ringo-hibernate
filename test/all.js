@@ -27,15 +27,11 @@ const VITAE_1 = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
         'gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
 const VITAE_2 = VITAE_1 + ' Foo.';
 
-exports.setUp = function () {
+exports.setUp = exports.tearDown = function () {
     store.withSession(function (session) { // Clean table.
         session.createQuery('delete from Person').executeUpdate();
     });
     assertNull(Person.get(1));
-};
-
-exports.testSessionInit = function () {
-    assertTrue(store.getSession() instanceof org.hibernate.Session);
 };
 
 exports.testPersistCreation = function () {
@@ -77,6 +73,27 @@ exports.testPersistDeletion = function () {
     person = Person.get(personId);
     assertNull(person);
     assertEqual(0, Person.all().length);
+};
+
+exports.testPersistInvalidEntity = function () {
+    person = createTestPerson();
+    person.save();
+    person = createTestPerson(); // `vitae/resume` must be unique.
+    assertThrows(function () person.save(), org.hibernate.exception.
+            ConstraintViolationException);
+    person = createTestPerson();
+    person.firstName = 42; // `firstName` must be string.
+    assertThrows(function () person.save(), java.lang.ClassCastException);
+    person = createTestPerson();
+    person.lastName = new Date(); // `lastName` must be string.
+    assertThrows(function () person.save(), java.lang.ClassCastException);
+    person = createTestPerson();
+    person.birthDate = null; // `birthDate` mustn't be null.
+    assertThrows(function () person.save(), org.hibernate.
+            PropertyValueException);
+    assertThrows(function () (new Person).save(), org.hibernate.
+            PropertyValueException); // "Empty" person must fail.
+    assertEqual(1, Person.all().length);
 };
 
 exports.testBasicQuerying = function () {
@@ -153,26 +170,6 @@ function testGreaterLessQuerying() {
             greater('birthDate', new Date(BIRTH_DATE_MILLIS - 1)).
             less('birthYear', BIRTH_YEAR + 1).select('lastName')[0]);
 }
-
-exports.testPersistInvalidEntity = function () {
-    person = createTestPerson();
-    person.save();
-    person = createTestPerson(); // `vitae/resume` must be unique.
-    assertThrows(function () person.save(), org.hibernate.exception.
-            ConstraintViolationException);
-    person = createTestPerson();
-    person.firstName = 42; // `firstName` must be string.
-    assertThrows(function () person.save(), java.lang.ClassCastException);
-    person = createTestPerson();
-    person.lastName = new Date(); // `lastName` must be string.
-    assertThrows(function () person.save(), java.lang.ClassCastException);
-    person = createTestPerson();
-    person.birthDate = null; // `birthDate` mustn't be null.
-    assertThrows(function () person.save(), org.hibernate.
-            PropertyValueException);
-    assertThrows(function () (new Person).save(), org.hibernate.
-            PropertyValueException); // "Empty" person must fail.
-};
 
 function createTestPerson() {
     return new Person({firstName: FIRST_NAME_1, lastName: LAST_NAME,
