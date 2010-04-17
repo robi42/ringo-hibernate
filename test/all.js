@@ -24,6 +24,8 @@ const BIRTH_DATE_MILLIS = 123456789000;
 const BIRTH_YEAR = new Date(BIRTH_DATE_MILLIS).getFullYear();
 const SSN_1 = 'AT-1234291173';
 const SSN_2 = 'AT-4321291173';
+const SSN_3 = 'AT-1235291173';
+const SSN_4 = 'AT-5321291173';
 const VITAE = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
         'sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ' +
         'aliquyam erat, sed diam voluptua. At vero eos et accusam et justo ' +
@@ -109,6 +111,8 @@ exports.testBasicQuerying = function () {
     assertEqual(SSN_2, Person.query().equals('lastName', LAST_NAME).
             equals('firstName', FIRST_NAME_2).select('ssn')[0]);
     testGreaterLessQuerying();
+    testOrderByQuerying();
+    testSliceQuerying();
 };
 
 function testGreaterLessQuerying() {
@@ -155,6 +159,42 @@ function testGreaterLessQuerying() {
     assertEqual(LAST_NAME, Person.query().equals('lastName', LAST_NAME).
             greater('birthDate', new Date(BIRTH_DATE_MILLIS - 1000)).
             less('birthYear', BIRTH_YEAR + 1).select('lastName')[0]);
+}
+
+function testOrderByQuerying() {
+    assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
+            orderBy('firstName').select('firstName')[0]);
+    assertEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
+            orderBy('firstName').select('firstName')[1]);
+    assertEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
+            orderBy('firstName desc').select('firstName')[0]);
+    assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
+            orderBy('firstName DESCENDING').select('firstName')[1]);
+}
+
+function testSliceQuerying() {
+    person = createTestPerson();
+    person.ssn = SSN_3;
+    person.save();
+    person = createTestPerson();
+    person.ssn = SSN_4;
+    person.save();
+    assertEqual(2, Person.query().limit(2).select().length);
+    assertEqual(LAST_NAME, Person.query().limit(2).select('lastName')[0]);
+    assertEqual(2, Person.query().equals('lastName', LAST_NAME).
+            limit(2).select().length);
+    assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
+            limit(2).select('firstName')[0]);
+    assertEqual(SSN_2, Person.query().equals('lastName', LAST_NAME).offset(1).
+            select('ssn')[0]);
+    assertEqual(2, Person.query().equals('lastName', LAST_NAME).offset(1).
+            limit(2).select().length);
+    assertEqual(SSN_3, Person.query().equals('lastName', LAST_NAME).offset(1).
+            limit(2).select('ssn').peek());
+    assertEqual(3, Person.query().equals('lastName', LAST_NAME).range(2, 4).
+            select().length);
+    assertEqual(SSN_4, Person.query().equals('lastName', LAST_NAME).range(2, 4).
+            select('ssn').peek());
 }
 
 exports.testPersistInvalidEntity = function () {
