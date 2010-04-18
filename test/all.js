@@ -162,14 +162,24 @@ function testGreaterLessQuerying() {
 }
 
 function testOrderByQuerying() {
+    assertEqual(2, Person.query().equals('lastName', LAST_NAME).
+            orderBy('firstName').select().length);
     assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName').select('firstName')[0]);
     assertEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName').select('firstName')[1]);
+    assertEqual(2, Person.query().equals('lastName', LAST_NAME).
+            orderBy('firstName desc').select().length);
     assertEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName desc').select('firstName')[0]);
+    assertEqual(2, Person.query().equals('lastName', LAST_NAME).
+            orderBy('firstName DESCENDING').select().length);
     assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName DESCENDING').select('firstName')[1]);
+    assertThrows(function () Person.query().orderBy('firstName  desc').select(),
+            org.hibernate.QueryException);
+    assertThrows(function () Person.query().orderBy('foo').select(),
+            org.hibernate.QueryException);
 }
 
 function testSliceQuerying() {
@@ -179,6 +189,7 @@ function testSliceQuerying() {
     person = createTestPerson();
     person.ssn = SSN_4;
     person.save();
+    assertEqual(4, Person.all().length);
     assertEqual(2, Person.query().limit(2).select().length);
     assertEqual(LAST_NAME, Person.query().limit(2).select('lastName')[0]);
     assertEqual(2, Person.query().equals('lastName', LAST_NAME).
@@ -191,10 +202,18 @@ function testSliceQuerying() {
             limit(2).select().length);
     assertEqual(SSN_3, Person.query().equals('lastName', LAST_NAME).offset(1).
             limit(2).select('ssn').peek());
-    assertEqual(3, Person.query().equals('lastName', LAST_NAME).range(2, 4).
+    assertEqual(3, Person.query().equals('lastName', LAST_NAME).range(1, 3).
             select().length);
-    assertEqual(SSN_4, Person.query().equals('lastName', LAST_NAME).range(2, 4).
+    assertEqual(SSN_4, Person.query().equals('lastName', LAST_NAME).range(1, 3).
             select('ssn').peek());
+    assertThrows(function () Person.query().offset(-1).select()[0],
+            org.hibernate.exception.GenericJDBCException);
+    assertEqual(0, Person.query().offset(4).select().length);
+    assertUndefined(Person.query().offset(4).select()[0]);
+    assertEqual(0, Person.query().range(4, 7).select().length);
+    assertUndefined(Person.query().range(4, 7).select()[0]);
+    assertEqual(1, Person.query().range(3, 7).select().length);
+    assertEqual(SSN_4, Person.query().range(3, 7).select('ssn')[0]);
 }
 
 exports.testPersistInvalidEntity = function () {
