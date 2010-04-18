@@ -162,6 +162,10 @@ function testGreaterLessQuerying() {
 }
 
 function testOrderByQuerying() {
+    assertEqual(2, Person.query().orderBy('ssn').select().length);
+    assertEqual(SSN_1, Person.query().orderBy('ssn').select('ssn')[0]);
+    assertEqual(2, Person.query().orderBy('ssn desc').select().length);
+    assertEqual(SSN_2, Person.query().orderBy('ssn DESC').select('ssn')[0]);
     assertEqual(2, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName').select().length);
     assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
