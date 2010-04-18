@@ -177,7 +177,7 @@ function testOrderByQuerying() {
     assertEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName desc').select('firstName')[0]);
     assertEqual(2, Person.query().equals('lastName', LAST_NAME).
-            orderBy('firstName DESCENDING').select().length);
+            orderBy('firstName DESC').select().length);
     assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName DESCENDING').select('firstName')[1]);
     assertThrows(function () Person.query().orderBy('firstName  desc').select(),
@@ -210,8 +210,7 @@ function testSliceQuerying() {
             select().length);
     assertEqual(SSN_4, Person.query().equals('lastName', LAST_NAME).range(1, 3).
             select('ssn').peek());
-    assertThrows(function () Person.query().offset(-1).select()[0],
-            org.hibernate.exception.GenericJDBCException);
+    assertThrows(function () Person.query().offset(-1).select()[0]);
     assertEqual(0, Person.query().offset(4).select().length);
     assertUndefined(Person.query().offset(4).select()[0]);
     assertEqual(0, Person.query().range(4, 7).select().length);
