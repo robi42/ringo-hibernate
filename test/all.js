@@ -91,13 +91,24 @@ exports.testBasicQuerying = function () {
     person.firstName = FIRST_NAME_2;
     person.ssn = SSN_2;
     person.save();
-    store.withSession(function (session) {
-        assertEqual(2, session.createCriteria('Person').list().size());
-    });
     assertTrue(Person.all()[0] instanceof Storable &&
             Person.all()[0] instanceof Person);
     assertEqual(2, Person.all().length);
     assertEqual(LAST_NAME, Person.all()[0].lastName);
+    store.withSession(function (session) {
+        var hibernateQuery = session.createQuery('select p from Person p');
+        var wrappedList = store.wrap(hibernateQuery.list());
+        var wrappedListItem = store.wrap(hibernateQuery.list().get(1));
+        assertEqual(2, hibernateQuery.list().size());
+        assertEqual(2, wrappedList.length);
+        assertTrue(wrappedList[0] instanceof Storable &&
+                wrappedList[0] instanceof Person);
+        assertEqual(LAST_NAME, wrappedList[0].lastName);
+        assertTrue(wrappedListItem instanceof Storable &&
+                wrappedListItem instanceof Person);
+        assertEqual(FIRST_NAME_2, wrappedListItem.firstName);
+        assertEqual(2, session.createCriteria('Person').list().size());
+    });
     var testQuery = Person.query().equals('lastName', LAST_NAME);
     assertEqual(2, testQuery.select().length);
     var queriedPerson = Person.query().equals('firstName', FIRST_NAME_1).
