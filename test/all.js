@@ -6,7 +6,7 @@ var store = require('ringo/storage/hibernate');
 // Uncomment following line to test loading mappings from *.hbm.xml instead.
 //store.setHbmXmlDir(require('fs').join(module.directory, 'config'));
 var personId, person; // Define `Person` model w/ its O/R mapping.
-var Person = store.defineClass('Person', {
+var Person = store.defineEntity('Person', {
     table: 'persons',
     properties: {
         firstName: {type: 'string', nullable: false},
