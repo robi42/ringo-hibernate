@@ -98,6 +98,8 @@ exports.testBasicQuerying = function () {
             Person.all()[0] instanceof Person);
     assertEqual(2, Person.all().length);
     assertEqual(LAST_NAME, Person.all()[0].lastName);
+    var testQuery = Person.query().equals('lastName', LAST_NAME);
+    assertEqual(2, testQuery.select().length);
     var queriedPerson = Person.query().equals('firstName', FIRST_NAME_1).
             select()[0];
     assertTrue(queriedPerson instanceof Storable &&
