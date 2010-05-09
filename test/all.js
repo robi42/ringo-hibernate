@@ -46,6 +46,8 @@ exports.setUp = function () {
 exports.testPersistCreation = function () {
     person = createTestPerson();
     person.save();
+    assertEqual(1, person._id);
+    assertEqual(['Person', 1], person._key);
     person = Person.get(1);
     assertPerson();
     assertEqual(FIRST_NAME_1, person.firstName);
