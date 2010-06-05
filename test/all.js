@@ -179,8 +179,8 @@ function testGreaterLessQuerying() {
 function testOrderByQuerying() {
     assertEqual(2, Person.query().orderBy('ssn').select().length);
     assertEqual(SSN_1, Person.query().orderBy('ssn').select('ssn')[0]);
-    assertEqual(2, Person.query().orderBy('ssn desc').select().length);
-    assertEqual(SSN_2, Person.query().orderBy('ssn DESC').select('ssn')[0]);
+    assertEqual(2, Person.query().orderBy('-ssn').select().length);
+    assertEqual(SSN_2, Person.query().orderBy('-ssn').select('ssn')[0]);
     assertEqual(2, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName').select().length);
     assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
@@ -188,16 +188,14 @@ function testOrderByQuerying() {
     assertEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName').select('firstName')[1]);
     assertEqual(2, Person.query().equals('lastName', LAST_NAME).
-            orderBy('firstName desc').select().length);
+            orderBy('-firstName').select().length);
     assertEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
-            orderBy('firstName desc').select('firstName')[0]);
-    assertEqual(2, Person.query().equals('lastName', LAST_NAME).
-            orderBy('firstName DESC').select().length);
+            orderBy('-firstName').select('firstName')[0]);
     assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
-            orderBy('firstName DESCENDING').select('firstName')[1]);
-    assertThrows(function () Person.query().orderBy('firstName  desc').select(),
-            org.hibernate.QueryException);
+            orderBy('-firstName').select('firstName')[1]);
     assertThrows(function () Person.query().orderBy('foo').select(),
+            org.hibernate.QueryException);
+    assertThrows(function () Person.query().orderBy('-foo').select(),
             org.hibernate.QueryException);
 }
 
