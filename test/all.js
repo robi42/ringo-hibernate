@@ -1,6 +1,7 @@
 // Run w/, e.g.: $ ringo test/all
 
-include('ringo/unittest');
+var assert = require('assert'),
+    arrays = require('ringo/utils/arrays');
 addToClasspath('./config'); // To retrieve and load Hibernate config resources.
 var store = require('ringo/storage/hibernate');
 // Uncomment following line to test loading mappings from *.hbm.xml instead.
@@ -17,16 +18,16 @@ var Person = store.defineEntity('Person', {
         vitae: {column: 'resume', type: 'text'}
     }
 });
-const FIRST_NAME_1 = 'Hans';
-const FIRST_NAME_2 = 'Herbert';
-const LAST_NAME = 'Wurst';
-const BIRTH_DATE_MILLIS = 123456789000;
-const BIRTH_YEAR = new Date(BIRTH_DATE_MILLIS).getFullYear();
-const SSN_1 = 'AT-1234291173';
-const SSN_2 = 'AT-4321291173';
-const SSN_3 = 'AT-1235291173';
-const SSN_4 = 'AT-5321291173';
-const VITAE = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
+const FIRST_NAME_1 = 'Hans',
+    FIRST_NAME_2 = 'Herbert',
+    LAST_NAME = 'Wurst',
+    BIRTH_DATE_MILLIS = 123456789000,
+    BIRTH_YEAR = new Date(BIRTH_DATE_MILLIS).getFullYear(),
+    SSN_1 = 'AT-1234291173',
+    SSN_2 = 'AT-4321291173',
+    SSN_3 = 'AT-1235291173',
+    SSN_4 = 'AT-5321291173',
+    VITAE = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, ' +
         'sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ' +
         'aliquyam erat, sed diam voluptua. At vero eos et accusam et justo ' +
         'duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata ' +
@@ -40,21 +41,21 @@ exports.setUp = function () {
     store.withSession(function (session) { // Clean table.
         session.createQuery('delete from Person').executeUpdate();
     });
-    assertNull(Person.get(1));
+    assert.isNull(Person.get(1));
 };
 
 exports.testPersistCreation = function () {
     person = createTestPerson();
     person.save();
-    assertEqual(1, person._id);
-    assertEqual(['Person', 1], person._key);
+    assert.deepEqual(1, person._id);
+    assert.deepEqual(['Person', 1], person._key);
     person = Person.get(1);
     assertPerson();
-    assertEqual(FIRST_NAME_1, person.firstName);
-    assertEqual(LAST_NAME, person.lastName);
-    assertEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
-    assertEqual(BIRTH_YEAR, person.birthYear);
-    assertEqual(VITAE, person.vitae);
+    assert.deepEqual(FIRST_NAME_1, person.firstName);
+    assert.deepEqual(LAST_NAME, person.lastName);
+    assert.deepEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
+    assert.deepEqual(BIRTH_YEAR, person.birthYear);
+    assert.deepEqual(VITAE, person.vitae);
 };
 
 exports.testPersistUpdating = function () {
@@ -67,11 +68,11 @@ exports.testPersistUpdating = function () {
     person.save();
     person = Person.get(personId);
     assertPerson();
-    assertEqual(FIRST_NAME_2, person.firstName);
-    assertEqual(LAST_NAME, person.lastName);
-    assertEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
-    assertEqual(BIRTH_YEAR, person.birthYear);
-    assertEqual(VITAE, person.vitae);
+    assert.deepEqual(FIRST_NAME_2, person.firstName);
+    assert.deepEqual(LAST_NAME, person.lastName);
+    assert.deepEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
+    assert.deepEqual(BIRTH_YEAR, person.birthYear);
+    assert.deepEqual(VITAE, person.vitae);
 };
 
 exports.testPersistDeletion = function () {
@@ -82,8 +83,8 @@ exports.testPersistDeletion = function () {
     personId = person._id;
     person.remove();
     person = Person.get(personId);
-    assertNull(person);
-    assertEqual(0, Person.all().length);
+    assert.isNull(person);
+    assert.deepEqual(0, Person.all().length);
 };
 
 exports.testBasicQuerying = function () {
@@ -93,37 +94,37 @@ exports.testBasicQuerying = function () {
     person.firstName = FIRST_NAME_2;
     person.ssn = SSN_2;
     person.save();
-    assertTrue(Person.all()[0] instanceof Storable &&
+    assert.isTrue(Person.all()[0] instanceof Storable &&
             Person.all()[0] instanceof Person);
-    assertEqual(2, Person.all().length);
-    assertEqual(LAST_NAME, Person.all()[0].lastName);
+    assert.deepEqual(2, Person.all().length);
+    assert.deepEqual(LAST_NAME, Person.all()[0].lastName);
     store.withSession(function (session) {
         var hibernateQuery = session.createQuery('select p from Person p');
         var wrappedList = store.wrap(hibernateQuery.list());
         var wrappedListItem = store.wrap(hibernateQuery.list().get(1));
-        assertEqual(2, hibernateQuery.list().size());
-        assertEqual(2, wrappedList.length);
-        assertTrue(wrappedList[0] instanceof Storable &&
+        assert.deepEqual(2, hibernateQuery.list().size());
+        assert.deepEqual(2, wrappedList.length);
+        assert.isTrue(wrappedList[0] instanceof Storable &&
                 wrappedList[0] instanceof Person);
-        assertEqual(LAST_NAME, wrappedList[0].lastName);
-        assertTrue(wrappedListItem instanceof Storable &&
+        assert.deepEqual(LAST_NAME, wrappedList[0].lastName);
+        assert.isTrue(wrappedListItem instanceof Storable &&
                 wrappedListItem instanceof Person);
-        assertEqual(FIRST_NAME_2, wrappedListItem.firstName);
-        assertEqual(2, session.createCriteria('Person').list().size());
+        assert.deepEqual(FIRST_NAME_2, wrappedListItem.firstName);
+        assert.deepEqual(2, session.createCriteria('Person').list().size());
     });
     var testQuery = Person.query().equals('lastName', LAST_NAME);
-    assertEqual(2, testQuery.select().length);
+    assert.deepEqual(2, testQuery.select().length);
     var queriedPerson = Person.query().equals('firstName', FIRST_NAME_1).
             select()[0];
-    assertTrue(queriedPerson instanceof Storable &&
+    assert.isTrue(queriedPerson instanceof Storable &&
             queriedPerson instanceof Person);
-    assertEqual(1, Person.query().equals('firstName', FIRST_NAME_1).select().
+    assert.deepEqual(1, Person.query().equals('firstName', FIRST_NAME_1).select().
             length);
-    assertEqual(FIRST_NAME_1, Person.query().equals('firstName', FIRST_NAME_1).
+    assert.deepEqual(FIRST_NAME_1, Person.query().equals('firstName', FIRST_NAME_1).
             select('firstName')[0]);
-    assertEqual(2, Person.query().equals('lastName', LAST_NAME).select().
+    assert.deepEqual(2, Person.query().equals('lastName', LAST_NAME).select().
             length);
-    assertEqual(SSN_2, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(SSN_2, Person.query().equals('lastName', LAST_NAME).
             equals('firstName', FIRST_NAME_2).select('ssn')[0]);
     testGreaterLessQuerying();
     testOrderByQuerying();
@@ -131,71 +132,71 @@ exports.testBasicQuerying = function () {
 };
 
 function testGreaterLessQuerying() {
-    assertEqual(2, Person.query().greater('birthYear', BIRTH_YEAR - 1).select().
+    assert.deepEqual(2, Person.query().greater('birthYear', BIRTH_YEAR - 1).select().
             length);
-    assertEqual(0, Person.query().greater('birthYear', BIRTH_YEAR + 1).select().
+    assert.deepEqual(0, Person.query().greater('birthYear', BIRTH_YEAR + 1).select().
             length);
-    assertEqual(2, Person.query().less('birthYear', BIRTH_YEAR + 1).select().
+    assert.deepEqual(2, Person.query().less('birthYear', BIRTH_YEAR + 1).select().
             length);
-    assertEqual(0, Person.query().less('birthYear', BIRTH_YEAR - 1).select().
+    assert.deepEqual(0, Person.query().less('birthYear', BIRTH_YEAR - 1).select().
             length);
-    assertEqual(2, Person.query().greaterEquals('birthYear', BIRTH_YEAR).
+    assert.deepEqual(2, Person.query().greaterEquals('birthYear', BIRTH_YEAR).
             select().length);
-    assertEqual(2, Person.query().greaterEquals('birthYear', BIRTH_YEAR - 1).
+    assert.deepEqual(2, Person.query().greaterEquals('birthYear', BIRTH_YEAR - 1).
             select().length);
-    assertEqual(0, Person.query().greaterEquals('birthYear', BIRTH_YEAR + 1).
+    assert.deepEqual(0, Person.query().greaterEquals('birthYear', BIRTH_YEAR + 1).
             select().length);
-    assertEqual(2, Person.query().lessEquals('birthYear', BIRTH_YEAR).select().
+    assert.deepEqual(2, Person.query().lessEquals('birthYear', BIRTH_YEAR).select().
             length);
-    assertEqual(2, Person.query().lessEquals('birthYear', BIRTH_YEAR + 1).
+    assert.deepEqual(2, Person.query().lessEquals('birthYear', BIRTH_YEAR + 1).
             select().length);
-    assertEqual(0, Person.query().lessEquals('birthYear', BIRTH_YEAR - 1).
+    assert.deepEqual(0, Person.query().lessEquals('birthYear', BIRTH_YEAR - 1).
             select().length);
-    assertEqual(2, Person.query().greater('birthDate', new Date(
+    assert.deepEqual(2, Person.query().greater('birthDate', new Date(
             BIRTH_DATE_MILLIS - 1000)).select().length);
-    assertEqual(0, Person.query().greater('birthDate', new Date(
+    assert.deepEqual(0, Person.query().greater('birthDate', new Date(
             BIRTH_DATE_MILLIS)).select().length);
-    assertEqual(2, Person.query().less('birthDate', new Date(BIRTH_DATE_MILLIS +
+    assert.deepEqual(2, Person.query().less('birthDate', new Date(BIRTH_DATE_MILLIS +
             1000)).select().length);
-    assertEqual(0, Person.query().less('birthDate', new Date(BIRTH_DATE_MILLIS)
+    assert.deepEqual(0, Person.query().less('birthDate', new Date(BIRTH_DATE_MILLIS)
             ).select().length);
-    assertEqual(2, Person.query().greaterEquals('birthDate', new Date(
+    assert.deepEqual(2, Person.query().greaterEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS)).select().length);
-    assertEqual(2, Person.query().greaterEquals('birthDate', new Date(
+    assert.deepEqual(2, Person.query().greaterEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS - 1000)).select().length);
-    assertEqual(0, Person.query().greaterEquals('birthDate', new Date(
+    assert.deepEqual(0, Person.query().greaterEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS + 1000)).select().length);
-    assertEqual(2, Person.query().lessEquals('birthDate', new Date(
+    assert.deepEqual(2, Person.query().lessEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS)).select().length);
-    assertEqual(2, Person.query().lessEquals('birthDate', new Date(
+    assert.deepEqual(2, Person.query().lessEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS + 1000)).select().length);
-    assertEqual(0, Person.query().lessEquals('birthDate', new Date(
+    assert.deepEqual(0, Person.query().lessEquals('birthDate', new Date(
             BIRTH_DATE_MILLIS - 1000)).select().length);
-    assertEqual(LAST_NAME, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(LAST_NAME, Person.query().equals('lastName', LAST_NAME).
             greater('birthDate', new Date(BIRTH_DATE_MILLIS - 1000)).
             less('birthYear', BIRTH_YEAR + 1).select('lastName')[0]);
 }
 
 function testOrderByQuerying() {
-    assertEqual(2, Person.query().orderBy('ssn').select().length);
-    assertEqual(SSN_1, Person.query().orderBy('ssn').select('ssn')[0]);
-    assertEqual(2, Person.query().orderBy('-ssn').select().length);
-    assertEqual(SSN_2, Person.query().orderBy('-ssn').select('ssn')[0]);
-    assertEqual(2, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(2, Person.query().orderBy('ssn').select().length);
+    assert.deepEqual(SSN_1, Person.query().orderBy('ssn').select('ssn')[0]);
+    assert.deepEqual(2, Person.query().orderBy('-ssn').select().length);
+    assert.deepEqual(SSN_2, Person.query().orderBy('-ssn').select('ssn')[0]);
+    assert.deepEqual(2, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName').select().length);
-    assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName').select('firstName')[0]);
-    assertEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
             orderBy('firstName').select('firstName')[1]);
-    assertEqual(2, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(2, Person.query().equals('lastName', LAST_NAME).
             orderBy('-firstName').select().length);
-    assertEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(FIRST_NAME_2, Person.query().equals('lastName', LAST_NAME).
             orderBy('-firstName').select('firstName')[0]);
-    assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
             orderBy('-firstName').select('firstName')[1]);
-    assertThrows(function () Person.query().orderBy('foo').select(),
+    assert['throws'](function () Person.query().orderBy('foo').select(),
             org.hibernate.QueryException);
-    assertThrows(function () Person.query().orderBy('-foo').select(),
+    assert['throws'](function () Person.query().orderBy('-foo').select(),
             org.hibernate.QueryException);
 }
 
@@ -206,51 +207,51 @@ function testSliceQuerying() {
     person = createTestPerson();
     person.ssn = SSN_4;
     person.save();
-    assertEqual(4, Person.all().length);
-    assertEqual(2, Person.query().limit(2).select().length);
-    assertEqual(LAST_NAME, Person.query().limit(2).select('lastName')[0]);
-    assertEqual(2, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(4, Person.all().length);
+    assert.deepEqual(2, Person.query().limit(2).select().length);
+    assert.deepEqual(LAST_NAME, Person.query().limit(2).select('lastName')[0]);
+    assert.deepEqual(2, Person.query().equals('lastName', LAST_NAME).
             limit(2).select().length);
-    assertEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
+    assert.deepEqual(FIRST_NAME_1, Person.query().equals('lastName', LAST_NAME).
             limit(2).select('firstName')[0]);
-    assertEqual(SSN_2, Person.query().equals('lastName', LAST_NAME).offset(1).
+    assert.deepEqual(SSN_2, Person.query().equals('lastName', LAST_NAME).offset(1).
             select('ssn')[0]);
-    assertEqual(2, Person.query().equals('lastName', LAST_NAME).offset(1).
+    assert.deepEqual(2, Person.query().equals('lastName', LAST_NAME).offset(1).
             limit(2).select().length);
-    assertEqual(SSN_3, Person.query().equals('lastName', LAST_NAME).offset(1).
-            limit(2).select('ssn').peek());
-    assertEqual(3, Person.query().equals('lastName', LAST_NAME).range(1, 3).
+    assert.deepEqual(SSN_3, arrays.peek(Person.query().equals(
+            'lastName', LAST_NAME).offset(1).limit(2).select('ssn')));
+    assert.deepEqual(3, Person.query().equals('lastName', LAST_NAME).range(1, 3).
             select().length);
-    assertEqual(SSN_4, Person.query().equals('lastName', LAST_NAME).range(1, 3).
-            select('ssn').peek());
-    assertThrows(function () Person.query().offset(-1).select()[0]);
-    assertEqual(0, Person.query().offset(4).select().length);
-    assertUndefined(Person.query().offset(4).select()[0]);
-    assertEqual(0, Person.query().range(4, 7).select().length);
-    assertUndefined(Person.query().range(4, 7).select()[0]);
-    assertEqual(1, Person.query().range(3, 7).select().length);
-    assertEqual(SSN_4, Person.query().range(3, 7).select('ssn')[0]);
+    assert.deepEqual(SSN_4, arrays.peek(Person.query().equals(
+            'lastName', LAST_NAME).range(1, 3).select('ssn')));
+    assert['throws'](function () Person.query().offset(-1).select()[0]);
+    assert.deepEqual(0, Person.query().offset(4).select().length);
+    assert.isUndefined(Person.query().offset(4).select()[0]);
+    assert.deepEqual(0, Person.query().range(4, 7).select().length);
+    assert.isUndefined(Person.query().range(4, 7).select()[0]);
+    assert.deepEqual(1, Person.query().range(3, 7).select().length);
+    assert.deepEqual(SSN_4, Person.query().range(3, 7).select('ssn')[0]);
 }
 
 exports.testPersistInvalidEntity = function () {
     person = createTestPerson();
     person.save();
     person = createTestPerson(); // `ssn` must be unique.
-    assertThrows(function () person.save(), org.hibernate.exception.
+    assert['throws'](function () person.save(), org.hibernate.exception.
             ConstraintViolationException);
     person = createTestPerson();
     person.firstName = 42; // `firstName` must be string.
-    assertThrows(function () person.save(), java.lang.ClassCastException);
+    assert['throws'](function () person.save(), java.lang.ClassCastException);
     person = createTestPerson();
     person.lastName = new Date(); // `lastName` must be string.
-    assertThrows(function () person.save(), java.lang.ClassCastException);
+    assert['throws'](function () person.save(), java.lang.ClassCastException);
     person = createTestPerson();
     person.birthDate = null; // `birthDate` mustn't be null.
-    assertThrows(function () person.save(), org.hibernate.
+    assert['throws'](function () person.save(), org.hibernate.
             PropertyValueException);
-    assertThrows(function () (new Person).save(), org.hibernate.
+    assert['throws'](function () (new Person).save(), org.hibernate.
             PropertyValueException); // "Empty" person must fail.
-    assertEqual(1, Person.all().length);
+    assert.deepEqual(1, Person.all().length);
 };
 
 function createTestPerson() {
@@ -260,11 +261,11 @@ function createTestPerson() {
 }
 
 function assertPerson() {
-    assertNotNull(person);
-    assertTrue(person instanceof Storable &&
+    assert.isNotNull(person);
+    assert.isTrue(person instanceof Storable &&
             person instanceof Person);
 }
 
 if (require.main == module.id) {
-    require('ringo/unittest').run(exports);
+    require('test').run(exports);
 }
