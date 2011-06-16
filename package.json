@@ -1,6 +1,6 @@
 {
     "name": "ringo-hibernate",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Enables RingoJS to use Hibernate as ORM/persistence layer.",
     "keywords": ["rhino", "ringo", "hibernate", "storage", "orm"],
     "author": "Robert Thurnher (http://robert42.com/) <r.thurnher@gmail.com>",
@@ -8,18 +8,5 @@
         "Hannes Wallnöfer (http://henso.com/) <hannes@helma.at>",
         "Marius Lessiak"
     ],
-    "jars": [
-        "jars/antlr-2.7.6.jar",
-        "jars/backport-util-concurrent-Java50-3.1.jar",
-        "jars/c3p0-0.9.1.jar",
-        "jars/commons-collections-3.1.jar",
-        "jars/commons-logging-1.1.1.jar",
-        "jars/dom4j-1.6.1.jar",
-        "jars/ehcache-1.5.0.jar",
-        "jars/hibernate3.jar",
-        "jars/javassist-3.9.0.GA.jar",
-        "jars/jsr107cache-1.1.jar",
-        "jars/jta-1.1.jar",
-        "jars/hsqldb-1.8.1.2.jar"
-    ]
+    "main": "lib/main.js"
 }

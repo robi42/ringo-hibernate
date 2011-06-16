@@ -1,9 +1,10 @@
 // Run w/, e.g.: $ ringo test/all
 
 var assert = require('assert'),
-    arrays = require('ringo/utils/arrays');
-addToClasspath('./config'); // To retrieve and load Hibernate config resources.
-var store = require('ringo/storage/hibernate');
+    arrays = require('ringo/utils/arrays'),
+    {Storable} = require('ringo-storable');
+addToClasspath(module.resolve('./config')); // To retrieve and load Hibernate config resources.
+var store = require('ringo-hibernate');
 // Uncomment following line to test loading mappings from *.hbm.xml instead.
 //store.setHbmXmlDir(require('fs').join(module.directory, 'config'));
 var personId, person; // Define `Person` model w/ its O/R mapping.
@@ -47,10 +48,10 @@ exports.setUp = function () {
 exports.testPersistCreation = function () {
     person = createTestPerson();
     person.save();
-    assert.deepEqual(1, person._id);
-    assert.deepEqual(['Person', 1], person._key);
     person = Person.get(1);
     assertPerson();
+    assert.deepEqual(1, person._id);
+    assert.deepEqual(['Person', 1], person._key);
     assert.deepEqual(FIRST_NAME_1, person.firstName);
     assert.deepEqual(LAST_NAME, person.lastName);
     assert.deepEqual(new Date(BIRTH_DATE_MILLIS), person.birthDate);
